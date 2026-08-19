@@ -1,0 +1,6 @@
+.venv/
+.venv.py39.bak/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
