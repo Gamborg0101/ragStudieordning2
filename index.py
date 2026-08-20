@@ -1,21 +1,17 @@
 import uuid
+
 from deepagents import create_deep_agent
+from deepagents.backends import StateBackend
 from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
-from langchain.tools import tool
-from prompts.rag_workflow_instructions import (
-    RAG_WORKFLOW_INSTRUCTIONS as rag_workflow_instructions,
-)
-from prompts.chunk_analyst_instructions import (
-    CHUNK_ANALYST_INSTRUCTIONS as chunk_analyst_instructions,
-)
-from prompts.search_studieordninger_prompt import search_studieordninger_prompt
-from prompts.subagent_delegation_instructions import (
-    SUBAGENT_DELEGATION_INSTRUCTIONS as subagent_delegation_instructions,
-)
+
 from datacollection import vector
-from datacollection.load_corpus import VECTOR_STORE_PATH, CORPUS_DIR, load_corpus_docs
-from deepagents.backends import StateBackend
+from prompts import (
+    CHUNK_ANALYST_INSTRUCTIONS,
+    RAG_WORKFLOW_INSTRUCTIONS,
+    SUBAGENT_DELEGATION_INSTRUCTIONS,
+    search_studieordninger_prompt,
+)
 
 
 def search_studieordninger(query: str) -> str:
@@ -42,11 +38,11 @@ search_studieordninger.__doc__ = search_studieordninger_prompt
 max_concurrent_analysts = 3
 
 INSTRUCTIONS = (
-    rag_workflow_instructions
+    RAG_WORKFLOW_INSTRUCTIONS
     + "\n\n"
     + "=" * 80
     + "\n\n"
-    + subagent_delegation_instructions.format(
+    + SUBAGENT_DELEGATION_INSTRUCTIONS.format(
         max_concurrent_analysts=max_concurrent_analysts,
     )
 )
@@ -57,7 +53,7 @@ chunk_analyst_subagent = {
         "Analyze one retrieved studieordning chunk file. "
         "Pass the user question and a single file path under /retrieved/."
     ),
-    "system_prompt": chunk_analyst_instructions,
+    "system_prompt": CHUNK_ANALYST_INSTRUCTIONS,
 }
 
 model = init_chat_model(model="ollama:qwen2.5:7b")

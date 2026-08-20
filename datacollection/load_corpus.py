@@ -1,7 +1,7 @@
 from pathlib import Path
+
 from bs4 import BeautifulSoup
 from langchain_core.documents import Document
-
 
 CORPUS_DIR = Path("./corpus")
 VECTOR_STORE_PATH = Path("data/vector_store.npz")
