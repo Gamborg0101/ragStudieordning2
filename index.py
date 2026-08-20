@@ -32,7 +32,9 @@ def save_vector_store(vector_store: InMemoryVectorStore, path: Path) -> None:
     ids = list(vector_store.store.keys())
     vectors = np.array([vector_store.store[i]["vector"] for i in ids], dtype=np.float32)
     texts = np.array([vector_store.store[i]["text"] for i in ids])
-    sources = np.array([vector_store.store[i]["metadata"].get("source", "") for i in ids])
+    sources = np.array(
+        [vector_store.store[i]["metadata"].get("source", "") for i in ids]
+    )
     np.savez_compressed(
         path,
         ids=np.array(ids),
