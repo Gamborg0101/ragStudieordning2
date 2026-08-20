@@ -3,19 +3,22 @@ from deepagents import create_deep_agent
 from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
 from langchain.tools import tool
-from prompts import (
-    rag_workflow_instructions,
-    chunk_analyst_instructions,
-    search_studieordninger_prompt,
-    subagent_delegation_instructions,
+from prompts.rag_workflow_instructions import (
+    RAG_WORKFLOW_INSTRUCTIONS as rag_workflow_instructions,
+)
+from prompts.chunk_analyst_instructions import (
+    CHUNK_ANALYST_INSTRUCTIONS as chunk_analyst_instructions,
+)
+from prompts.search_studieordninger_prompt import search_studieordninger_prompt
+from prompts.subagent_delegation_instructions import (
+    SUBAGENT_DELEGATION_INSTRUCTIONS as subagent_delegation_instructions,
 )
 from datacollection import vector
+from datacollection.load_corpus import VECTOR_STORE_PATH, CORPUS_DIR, load_corpus_docs
+from deepagents.backends import StateBackend
 
 
-@tool(parse_docstring=True)
 def search_studieordninger(query: str) -> str:
-    _ = search_studieordninger_prompt
-
     retrieved_docs = vector.vector_store.similarity_search(query, k=4)
     batch_id = uuid.uuid4().hex[:8]
     uploads: list[tuple[str, bytes]] = []
@@ -33,12 +36,13 @@ def search_studieordninger(query: str) -> str:
     return f"Saved {len(saved_paths)} studieordning chunks:\n" + "\n".join(saved_paths)
 
 
-RAG_WORKFLOW_INSTRUCTIONS = rag_workflow_instructions
+search_studieordninger.__doc__ = search_studieordninger_prompt
+
 
 max_concurrent_analysts = 3
 
 INSTRUCTIONS = (
-    RAG_WORKFLOW_INSTRUCTIONS
+    rag_workflow_instructions
     + "\n\n"
     + "=" * 80
     + "\n\n"
@@ -57,6 +61,8 @@ chunk_analyst_subagent = {
 }
 
 model = init_chat_model(model="ollama:qwen2.5:7b")
+
+backend = StateBackend()
 
 agent = create_deep_agent(
     model=model,
