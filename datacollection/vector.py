@@ -4,6 +4,7 @@ from deepagents.backends import StateBackend
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_ollama import OllamaEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from datacollection.load_corpus import VECTOR_STORE_PATH, CORPUS_DIR, load_corpus_docs
 
 
 def save_vector_store(vector_store: InMemoryVectorStore, path: Path) -> None:
@@ -65,5 +66,3 @@ else:
 
     save_vector_store(vector_store, VECTOR_STORE_PATH)
     print(f"Persisted vector store to {VECTOR_STORE_PATH}.")
-
-backend = StateBackend()
