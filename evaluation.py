@@ -45,11 +45,11 @@ def createQuestion(question: str, gold_answer: str, agent_answer: str):
     Gold answer: {gold_answer}, 
     Agent answer: {agent_answer}
     """
-    
 
 
 # Start med at få input og output herind.
-#
+# Still problem with passing in user_query / llm_output for every record in generation.jsonl, and then pass the whole result dict where grade_answer expects a gold_answer string.
+
 
 
 # ----
