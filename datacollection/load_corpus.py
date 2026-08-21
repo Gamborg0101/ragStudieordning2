@@ -10,9 +10,7 @@ VECTOR_STORE_PATH = Path("data/vector_store.npz")
 def load_corpus_docs(corpus_dir: Path) -> list[Document]:
     """Load and parse the local HTML corpus into Documents."""
     docs: list[Document] = []
-    for path in corpus_dir.glob(
-        "Regelgrundlag for masteruddannelserne - Master i it.html"
-    ):
+    for path in corpus_dir.glob("*.html"):
         soup = BeautifulSoup(path.read_text(), "html.parser")
         for tag in soup(["nav", "header", "footer", "script", "style"]):
             tag.decompose()

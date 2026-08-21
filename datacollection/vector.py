@@ -1,10 +1,11 @@
 from pathlib import Path
+
 import numpy as np
-from deepagents.backends import StateBackend
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_ollama import OllamaEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from datacollection.load_corpus import VECTOR_STORE_PATH, CORPUS_DIR, load_corpus_docs
+
+from datacollection.load_corpus import CORPUS_DIR, VECTOR_STORE_PATH, load_corpus_docs
 
 
 def save_vector_store(vector_store: InMemoryVectorStore, path: Path) -> None:
