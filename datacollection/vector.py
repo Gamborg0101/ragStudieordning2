@@ -5,7 +5,7 @@ from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_ollama import OllamaEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from datacollection.load_corpus import CORPUS_DIR, VECTOR_STORE_PATH, load_corpus_docs
+from datacollection.load_corpus import CORPUS_DIR, load_corpus_docs
 
 
 def save_vector_store(vector_store: InMemoryVectorStore, path: Path) -> None:
@@ -45,6 +45,8 @@ def load_vector_store(path: Path, embedding: OllamaEmbeddings) -> InMemoryVector
 
 
 embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+VECTOR_STORE_PATH = Path("data/vector_store.npz")
 
 if VECTOR_STORE_PATH.exists():
     vector_store = load_vector_store(VECTOR_STORE_PATH, embeddings)
