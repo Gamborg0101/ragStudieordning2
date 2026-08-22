@@ -3,8 +3,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 from langchain_core.documents import Document
 
-CORPUS_DIR = Path("./corpus")
-VECTOR_STORE_PATH = Path("data/vector_store.npz")
+CORPUS_DIR = Path("/corpus")
 
 
 def load_corpus_docs(corpus_dir: Path) -> list[Document]:

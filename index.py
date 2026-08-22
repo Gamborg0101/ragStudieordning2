@@ -76,4 +76,4 @@ if __name__ == "__main__":
     for answer in result.get("messages", []):
         if answer.text:
             print(answer.text)
-            generation_eval(EXAMPLE_QUERY, answer.text)
+            #generation_eval(EXAMPLE_QUERY, answer.text)
