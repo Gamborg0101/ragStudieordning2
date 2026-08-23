@@ -64,7 +64,8 @@ def generation_eval(user_query: str, llm_output: str):
         json_list = list(json_file)
     for json_str in json_list:
         result = json.loads(json_str)
-        grade_answer(user_query, result, llm_output)
+        return grade_answer(user_query, result, llm_output)
+        break
 
 def retrival_evaluation():
     """Evaluate retrieval results loaded from the retrieval JSONL file."""
@@ -73,24 +74,27 @@ def retrival_evaluation():
 
     for json_str in json_list:
         result = json.loads(json_str)
-        # print(f"Result: {result}")
 
 def grade_answer(question: str, gold_answer: str, agent_answer: str) -> bool:
     """Generate a grading answer and return a bool if answer is living up to criteria"""
     queryString = createQuestion(question, gold_answer, agent_answer)
     response = init_chat_model("ollama:qwen2.5:7b").invoke(queryString)
-    print(response)
     last_line = str(response.content).strip().splitlines()[-1]
     return last_line.startswith("GRADE: True")
 
 
 def createQuestion(question: str, gold_answer: str, agent_answer: str):
     return f"""
+    ---------------------------------------
     Instructions: {CORRECTION_INSTRUCTIONS}, 
     Question: {question},
     Gold answer: {gold_answer}, 
     Agent answer: {agent_answer}
+    ---------------------------------------
     """
+
+test = generation_eval(test_query, test_response)
+print(test)
 
 # Start med at få input og output herind.
 # Still problem with passing in user_query / llm_output for every record in generation.jsonl, and then pass the whole result dict where grade_answer expects a gold_answer string.
