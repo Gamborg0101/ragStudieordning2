@@ -16,12 +16,8 @@ def generation_eval():
     for json_str in json_list:
         record = json.loads(json_str)
         result = agent.invoke({"messages": [HumanMessage(content=record["question"])]})
-        llm_output = [
-            message.text for message in result["messages"] if message.text
-        ]
-
-        print("hihihihihi")
-        print("LLM_OUPUT: ", llm_output)
+        llm_output = [message.text for message in result["messages"] if message.text]
+        # print("LLM_OUPUT: ", llm_output)
         grade_answered = grade_answer(
             record["question"], record["gold_answer"], llm_output
         )
@@ -74,3 +70,5 @@ results = generation_eval()
 print(results)
 
 # Need to fix temperature
+# Need to fix prompts to answers like "Kan du lade mig udføre dette - etc." will not happen. Turns should not be allowed
+# I might soon be running into problems with model size, since qwen2.5 7b is not that big and does not have a large context window for these kinds of tasks
