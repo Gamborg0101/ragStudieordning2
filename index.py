@@ -6,7 +6,6 @@ from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
 
 from datacollection import vector
-from evaluation import generation_eval
 from prompts import (
     CHUNK_ANALYST_INSTRUCTIONS,
     RAG_WORKFLOW_INSTRUCTIONS,
@@ -76,4 +75,4 @@ if __name__ == "__main__":
     for answer in result.get("messages", []):
         if answer.text:
             print(answer.text)
-            #generation_eval(EXAMPLE_QUERY, answer.text)
+            # generation_eval(EXAMPLE_QUERY, answer.text)
