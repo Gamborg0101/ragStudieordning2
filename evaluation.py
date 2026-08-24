@@ -4,10 +4,9 @@ import time
 from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
 
+from datacollection.vector import vector_store
 from index import agent
 from prompts import CORRECTION_INSTRUCTIONS
-
-RETRIEVAL_K = 4  # matches the k used by search_studieordninger in index.py
 
 AGENT_INVOKE_ATTEMPTS = 3
 
@@ -31,7 +30,7 @@ def invoke_agent_with_retry(question: str, attempts: int = AGENT_INVOKE_ATTEMPTS
 
 def generation_eval():
     """Evaluate generation results loaded from the generation JSONL file to evaulate output quality."""
-    with open("eval/generation.jsonl", "r", encoding="utf-8") as json_file:
+    with open("eval/generation.jsonl", "r") as json_file:
         json_list = list(json_file)
         generation_results = []
     for json_str in json_list:
@@ -53,7 +52,7 @@ def generation_eval():
 
 def retrival_evaluation():
     """Evaluate retrieval results loaded from the retrieval JSONL file."""
-    with open("eval/retrieval.jsonl", "r", encoding="uft-8") as json_file:
+    with open("eval/retrieval.jsonl", "r") as json_file:
         json_list = list(json_file)
         # Question we want to answer: Did search_studieordninger find the right document. Runs before any generation happens at all.
         # Takes an question from retrieval.jsonl and should return a set of retrieved chunks.
@@ -61,9 +60,21 @@ def retrival_evaluation():
         # For this we use retrieval.jsonl
         # does the document that's supposed to answer the question appear among the sources of the chunks that came back
 
+    retrieval_results = []
     for json_str in json_list:
-        result = json.loads(json_str)
-        return result
+        record = json.loads(json_str)
+        result = vector_store.similarity_search(record["question"], k=4)
+        result_formatted = [doc.metadata["source"].split(".")[0] for doc in result]
+        hit = record["dok_ordning_id"] in result_formatted
+        retrieval_results.append(
+            {
+                "id": record["id"],
+                "hit": hit,
+                "expected_source": record["dok_ordning_id"],
+                "retrieved_sources": result_formatted,
+            }
+        )
+    return retrieval_results
 
 
 response_format = {
@@ -113,5 +124,7 @@ def create_question(question: str, gold_answer: str, agent_answer: str):
     """
 
 
-results = generation_eval()
-print(results)
+# results_generatione_eval = generation_eval()
+# print(results_generatione_eval)
+results_retrival_eval = retrival_evaluation()
+print(results_retrival_eval)
