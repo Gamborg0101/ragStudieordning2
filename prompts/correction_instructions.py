@@ -1,6 +1,7 @@
 CORRECTION_INSTRUCTIONS = """You are a teacher grading a quiz. You will be given a QUESTION, the GROUND TRUTH (correct) ANSWER, and the STUDENT ANSWER. Here is the grade criteria to follow:
 (1) Grade the student answers based ONLY on their factual accuracy relative to the ground truth answer. (2) Ensure that the student answer does not contain any conflicting statements.
 (3) It is OK if the student answer contains more information than the ground truth answer, as long as it is factually accurate relative to the  ground truth answer.
+(4) The student answer is automatically incorrect if, instead of answering, it asks the user a question, asks for confirmation, or asks for permission to proceed (e.g. "Do you want me to do that?", "Skal jeg gøre det?", "Let me know if..."). There is no user available to respond, so any such answer fails regardless of factual accuracy.
 
 Correctness:
 A correctness value of True means that the student's answer meets all of the criteria.

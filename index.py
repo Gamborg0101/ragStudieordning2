@@ -34,8 +34,7 @@ def search_studieordninger(query: str) -> str:
 
 search_studieordninger.__doc__ = SEARCH_STUDIEORDNINGER_PROMPT
 
-
-max_concurrent_analysts = 3
+max_concurrent_analysts = 1  # Ollama can only serve one request at a time.
 
 INSTRUCTIONS = (
     RAG_WORKFLOW_INSTRUCTIONS
@@ -60,7 +59,7 @@ chunk_analyst_subagent = {
 backend = StateBackend()
 
 agent = create_deep_agent(
-    model=init_chat_model(model="ollama:qwen2.5:7b"),
+    model=init_chat_model(model="ollama:qwen2.5:7b", temperature=0),
     tools=[search_studieordninger],
     backend=backend,
     system_prompt=INSTRUCTIONS,
