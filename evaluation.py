@@ -77,6 +77,9 @@ def retrival_evaluation():
     return retrieval_results
 
 
+# I need to try and improve the score here, with tuning k, chunk size/overlap or even the embedding model
+
+
 response_format = {
     "reasoning": str,
     "asked_for_confirmation": bool,
