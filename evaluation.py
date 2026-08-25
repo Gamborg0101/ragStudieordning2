@@ -135,7 +135,7 @@ for result in results_retrival_eval:
 
 
 # MMR is as far as it can go. I need metadata to fix data diversity.
-# In load_corpus_docs, extract each document's title from <title> and add it to metadata alongside source.
+# In load_corpus_docs, extract each document's title from <title> and add it to metadata alongside source.oad
 # Start with title and measure. Can always add more afterwards
 # Run the chunker as normal (metadata carries over to each chunk automatically).
 # AFTER chunking: prepend the title text onto each individual chunk's page_content, so every chunk carries it, not just the first.

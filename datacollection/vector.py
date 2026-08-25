@@ -59,6 +59,9 @@ else:
     all_splits = text_splitter.split_documents(docs)
     print(f"Split corpus into {len(all_splits)} chunks.")
 
+    for split in all_splits:
+        split.page_content = f"{split.metadata['title']}\n\n{split.page_content}"
+
     vector_store = InMemoryVectorStore(embedding=embeddings)
 
     EMBED_BATCH_SIZE = 200
