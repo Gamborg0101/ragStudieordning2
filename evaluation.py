@@ -58,7 +58,9 @@ def retrival_evaluation():
     for json_str in json_list:
         record = json.loads(json_str)
         # result = vector_store.similarity_search(record["question"], k=4)
-        result = vector_store.max_marginal_relevance_search(record["question"], 4, 20)
+        result = vector_store.max_marginal_relevance_search(
+            record["question"], 4, 20, 0.7
+        )
 
         result_formatted = []
         for doc in result:
@@ -75,9 +77,6 @@ def retrival_evaluation():
             }
         )
     return retrieval_results
-
-
-# I need to try and improve the score here, with tuning k, chunk size/overlap or even the embedding model
 
 
 response_format = {
@@ -134,6 +133,11 @@ results_retrival_eval = retrival_evaluation()
 for result in results_retrival_eval:
     print(result)
 
-# Not satisfied - we might have a data diversity problem - meaning, the data looks too similar. Could introduce metadata at the top of each chunk to make it more uniquely identificable
-# Just found MMR (Maximal Marginal Relevance) - a method that balances relevance to a query with diversity among the retrieved docuemtns to reduce redundancy
-# Todo: MMR and Metadata
+
+# MMR is as far as it can go. I need metadata to fix data diversity.
+# In load_corpus_docs, extract each document's title from <title> and add it to metadata alongside source.
+# Start with title and measure. Can always add more afterwards
+# Run the chunker as normal (metadata carries over to each chunk automatically).
+# AFTER chunking: prepend the title text onto each individual chunk's page_content, so every chunk carries it, not just the first.
+# Re-embed everything into vector_store.npz.
+# Remember its ret-02, ret-04 and ret-06 that caused problems
