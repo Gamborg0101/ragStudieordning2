@@ -54,17 +54,16 @@ def retrival_evaluation():
     """Evaluate retrieval results loaded from the retrieval JSONL file."""
     with open("eval/retrieval.jsonl", "r") as json_file:
         json_list = list(json_file)
-        # Question we want to answer: Did search_studieordninger find the right document. Runs before any generation happens at all.
-        # Takes an question from retrieval.jsonl and should return a set of retrieved chunks.
-        # We want to evaluate if we got the chunks from the correct document.
-        # For this we use retrieval.jsonl
-        # does the document that's supposed to answer the question appear among the sources of the chunks that came back
-
     retrieval_results = []
     for json_str in json_list:
         record = json.loads(json_str)
         result = vector_store.similarity_search(record["question"], k=4)
-        result_formatted = [doc.metadata["source"].split(".")[0] for doc in result]
+
+        result_formatted = []
+        for doc in result:
+            value = doc.metadata["source"].split(".")[0]
+            result_formatted.append(value)
+
         hit = record["dok_ordning_id"] in result_formatted
         retrieval_results.append(
             {
@@ -130,4 +129,9 @@ def create_question(question: str, gold_answer: str, agent_answer: str):
 # results_generatione_eval = generation_eval()
 # print(results_generatione_eval)
 results_retrival_eval = retrival_evaluation()
-print(results_retrival_eval)
+for result in results_retrival_eval:
+    print(result)
+
+# Not satisfied - we might have a data diversity problem - meaning, the data looks too similar. Could introduce metadata at the top of each chunk to make it more uniquely identificable
+# Just found MMR (Maximal Marginal Relevance) - a method that balances relevance to a query with diversity among the retrieved docuemtns to reduce redundancy
+# Todo: MMR and Metadata
