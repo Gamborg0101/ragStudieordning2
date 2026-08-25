@@ -57,7 +57,8 @@ def retrival_evaluation():
     retrieval_results = []
     for json_str in json_list:
         record = json.loads(json_str)
-        result = vector_store.similarity_search(record["question"], k=4)
+        # result = vector_store.similarity_search(record["question"], k=4)
+        result = vector_store.max_marginal_relevance_search(record["question"], 4, 20)
 
         result_formatted = []
         for doc in result:
@@ -129,6 +130,7 @@ def create_question(question: str, gold_answer: str, agent_answer: str):
 # results_generatione_eval = generation_eval()
 # print(results_generatione_eval)
 results_retrival_eval = retrival_evaluation()
+
 for result in results_retrival_eval:
     print(result)
 
