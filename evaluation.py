@@ -4,7 +4,7 @@ import time
 from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
 
-from datacollection.vector import vector_store
+from datacollection.vector_store import vector_store
 from index import agent
 from prompts import CORRECTION_INSTRUCTIONS
 
@@ -52,6 +52,13 @@ def generation_eval():
 
 def retrival_evaluation():
     """Evaluate retrieval results loaded from the retrieval JSONL file."""
+    title_lookup = {}
+    for record in vector_store.store.values():
+        title = record["metadata"]["title"]
+        source = record["metadata"]["source"]
+        title_lookup[source] = title
+    print(len(title_lookup))
+
     with open("eval/retrieval.jsonl", "r") as json_file:
         json_list = list(json_file)
     retrieval_results = []
@@ -61,6 +68,8 @@ def retrival_evaluation():
         result = vector_store.max_marginal_relevance_search(
             record["question"], 4, 20, 0.7
         )
+
+        # print(vector_store)
 
         result_formatted = []
         for doc in result:
@@ -126,18 +135,7 @@ def create_question(question: str, gold_answer: str, agent_answer: str):
     """
 
 
-# results_generatione_eval = generation_eval()
-# print(results_generatione_eval)
 results_retrival_eval = retrival_evaluation()
 
-for result in results_retrival_eval:
-    print(result)
-
-
-# MMR is as far as it can go. I need metadata to fix data diversity.
-# In load_corpus_docs, extract each document's title from <title> and add it to metadata alongside source.oad
-# Start with title and measure. Can always add more afterwards
-# Run the chunker as normal (metadata carries over to each chunk automatically).
-# AFTER chunking: prepend the title text onto each individual chunk's page_content, so every chunk carries it, not just the first.
-# Re-embed everything into vector_store.npz.
-# Remember its ret-02, ret-04 and ret-06 that caused problems
+# Rapidfuzz for comparison - this is next on to do
+# Optimize the dict with dict comprehension

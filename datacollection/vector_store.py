@@ -17,12 +17,16 @@ def save_vector_store(vector_store: InMemoryVectorStore, path: Path) -> None:
     sources = np.array(
         [vector_store.store[i]["metadata"].get("source", "") for i in ids]
     )
+
+    title = np.array([vector_store.store[i]["metadata"].get("title", "") for i in ids])
+
     np.savez_compressed(
         path,
         ids=np.array(ids),
         vectors=vectors,
         texts=texts,
         sources=sources,
+        title=title,
     )
 
 
@@ -35,10 +39,10 @@ def load_vector_store(path: Path, embedding: OllamaEmbeddings) -> InMemoryVector
             "id": str(doc_id),
             "vector": vector.tolist(),
             "text": str(text),
-            "metadata": {"source": str(source)},
+            "metadata": {"source": str(source), "title": str(title)},
         }
-        for doc_id, vector, text, source in zip(
-            data["ids"], data["vectors"], data["texts"], data["sources"]
+        for doc_id, vector, text, source, title in zip(
+            data["ids"], data["vectors"], data["texts"], data["sources"], data["title"]
         )
     }
     return vector_store

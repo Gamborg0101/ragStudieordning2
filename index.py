@@ -5,7 +5,7 @@ from deepagents.backends import StateBackend
 from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
 
-from datacollection import vector
+from datacollection import vector_store
 from prompts import (
     CHUNK_ANALYST_INSTRUCTIONS,
     RAG_WORKFLOW_INSTRUCTIONS,
@@ -15,7 +15,7 @@ from prompts import (
 
 
 def search_studieordninger(query: str) -> str:
-    retrieved_docs = vector.vector_store.similarity_search(query, k=4)
+    retrieved_docs = vector_store.vector_store.similarity_search(query, k=4)
     batch_id = uuid.uuid4().hex[:8]
     uploads: list[tuple[str, bytes]] = []
     saved_paths: list[str] = []
