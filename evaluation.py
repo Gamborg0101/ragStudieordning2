@@ -57,7 +57,7 @@ def retrival_evaluation():
         title = record["metadata"]["title"]
         source = record["metadata"]["source"]
         title_lookup[source] = title
-    print(len(title_lookup))
+    # print(len(title_lookup))
 
     with open("eval/retrieval.jsonl", "r") as json_file:
         json_list = list(json_file)
@@ -136,6 +136,10 @@ def create_question(question: str, gold_answer: str, agent_answer: str):
 
 
 results_retrival_eval = retrival_evaluation()
+
+for item in results_retrival_eval:
+    print(item)
+
 
 # Rapidfuzz for comparison - this is next on to do
 # Optimize the dict with dict comprehension
