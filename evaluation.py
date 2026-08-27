@@ -151,5 +151,5 @@ results_retrival_eval = retrival_evaluation()
 for result in results_retrival_eval:
     print(result)
 
-# Rapidfuzz for comparison - this is next on to do
-# Optimize the dict with dict comprehension
+# Maybe: embed each chunk with its document title and prepended to the text. Not just in the metadata. That would be adding a bias on the title.
+# Maybe at query time - do title-fuzzy-match
