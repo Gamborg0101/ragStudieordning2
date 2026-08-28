@@ -76,3 +76,5 @@ else:
 
     save_vector_store(vector_store, VECTOR_STORE_PATH)
     print(f"Persisted vector store to {VECTOR_STORE_PATH}.")
+
+#Next up - wire it up as an agent tool

@@ -1,4 +1,5 @@
 import json
+import re
 import time
 
 from langchain.chat_models import init_chat_model
@@ -38,7 +39,6 @@ def generation_eval():
         record = json.loads(json_str)
         result = invoke_agent_with_retry(record["question"])
         llm_output = [message.text for message in result["messages"] if message.text]
-        # print("LLM_OUPUT: ", llm_output)
         grade_answered = grade_answer(
             record["question"], record["gold_answer"], llm_output
         )
@@ -74,12 +74,12 @@ def retrival_evaluation():
                 highest_score = match_value
                 resource_id = title[0]
 
-        result = vector_store.max_marginal_relevance_search(
+        retrieved_documents = vector_store.max_marginal_relevance_search(
             record["question"], 4, 20, 0.7
         )
 
         retrived_source_ids = []
-        for doc in result:
+        for doc in retrieved_documents:
             value = doc.metadata["source"].split(".")[0]
             retrived_source_ids.append(value)
 
@@ -105,6 +105,33 @@ response_format = {
     "contains_conflicting_statements": bool,
     "factually_accurate": bool,
 }
+
+
+def title_and_year_lookup():
+    """Group titles by programme name and years existed - example: "historie" -> [2018, 2023]"""
+    title_year_lookup = {}
+    seen_sources = set()
+
+    for record in vector_store.store.values():
+        source = record["metadata"]["source"]
+        if source in seen_sources:
+            continue
+        seen_sources.add(source)
+
+        title = record["metadata"]["title"]
+        year_match = re.search(r"\((\d{4})\)", title)
+        if not year_match:
+            continue
+
+        year = int(year_match.group(1))
+        programme = title[: year_match.start()].strip()
+
+        title_year_lookup.setdefault(programme, []).append(year)
+
+    return title_year_lookup
+
+
+print(title_and_year_lookup())
 
 
 def grade_printer(query_string: str, last_line: str):
@@ -146,10 +173,5 @@ def create_question(question: str, gold_answer: str, agent_answer: str):
     """
 
 
-results_retrival_eval = retrival_evaluation()
-# print(results_retrival_eval)
-for result in results_retrival_eval:
-    print(result)
-
-# Maybe: embed each chunk with its document title and prepended to the text. Not just in the metadata. That would be adding a bias on the title.
-# Maybe at query time - do title-fuzzy-match
+for programme, years in title_and_year_lookup().items():
+    print(programme, years)
