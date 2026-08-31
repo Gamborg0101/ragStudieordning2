@@ -5,8 +5,7 @@ from deepagents.backends import StateBackend
 from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
 
-from datacollection.retrival import retrieve_docs
-
+from datacollection.retrieval import retrieve_docs
 from prompts import (
     CHUNK_ANALYST_INSTRUCTIONS,
     RAG_WORKFLOW_INSTRUCTIONS,

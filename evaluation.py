@@ -6,8 +6,7 @@ from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
 from rapidfuzz import fuzz
 
-from datacollection.retrival import retrieve_docs
-
+from datacollection.retrieval import retrieve_docs
 from datacollection.vector_store import vector_store
 from index import agent
 from prompts import CORRECTION_INSTRUCTIONS
