@@ -6,7 +6,7 @@ from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
 from rapidfuzz import fuzz
 
-from datacollection.retrieval import retrieve_docs
+from datacollection.retrieval import fuzzy_matcher, retrieve_docs
 from datacollection.vector_store import vector_store
 from index import agent
 from prompts import CORRECTION_INSTRUCTIONS
@@ -31,7 +31,7 @@ def invoke_agent_with_retry(question: str, attempts: int = AGENT_INVOKE_ATTEMPTS
             time.sleep(2)
 
 
-def generation_eval():
+def generation_evaluation():
     """Evaluate generation results loaded from the generation JSONL file to evaulate output quality."""
     with open("eval/generation.jsonl", "r") as json_file:
         json_list = list(json_file)
@@ -69,12 +69,15 @@ def retrival_evaluation():
         resource_id = 0.0
         record = json.loads(json_str)
 
+        test = fuzzy_matcher(title_lookup, record["question"])
+        print(test)
+
+        print(test)
         for title in title_lookup.items():
             match_value = fuzz.partial_ratio(title[1], record["question"])
             if match_value > highest_score:
                 highest_score = match_value
                 resource_id = title[0]
-        vector_store.max_marginal_relevance_search
         retrieved_documents = retrieve_docs(record["question"])
 
         retrived_source_ids = []
@@ -95,6 +98,7 @@ def retrival_evaluation():
                 "title_hit": title_hit,
             }
         )
+
     return retrieval_results
 
 
@@ -128,9 +132,6 @@ def title_and_year_lookup():
         title_year_lookup.setdefault(programme, []).append(year)
 
     return title_year_lookup
-
-
-print(title_and_year_lookup())
 
 
 def grade_printer(query_string: str, last_line: str):
@@ -172,5 +173,8 @@ def create_question(question: str, gold_answer: str, agent_answer: str):
     """
 
 
-for programme, years in title_and_year_lookup().items():
-    print(programme, years)
+test = retrival_evaluation()
+# for item in test:
+# print(item)
+
+# if __name__ == "__main__":

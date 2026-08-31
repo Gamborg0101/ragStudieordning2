@@ -1,5 +1,6 @@
 .venv/
 .venv.py39.bak/
+data/vector_store.npz
 __pycache__/
 *.pyc
 *.egg-info/
