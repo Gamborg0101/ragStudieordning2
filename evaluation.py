@@ -6,6 +6,8 @@ from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
 from rapidfuzz import fuzz
 
+from datacollection.retrival import retrieve_docs
+
 from datacollection.vector_store import vector_store
 from index import agent
 from prompts import CORRECTION_INSTRUCTIONS
@@ -73,10 +75,8 @@ def retrival_evaluation():
             if match_value > highest_score:
                 highest_score = match_value
                 resource_id = title[0]
-
-        retrieved_documents = vector_store.max_marginal_relevance_search(
-            record["question"], 4, 20, 0.7
-        )
+        vector_store.max_marginal_relevance_search
+        retrieved_documents = retrieve_docs(record["question"])
 
         retrived_source_ids = []
         for doc in retrieved_documents:
