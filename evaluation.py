@@ -4,9 +4,12 @@ import time
 
 from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
-from rapidfuzz import fuzz
 
-from datacollection.retrieval import fuzzy_matcher, retrieve_docs
+from datacollection.retrieval import (
+    get_title_lookup,
+    match_question_to_source,
+    retrieve_docs,
+)
 from datacollection.vector_store import vector_store
 from index import agent
 from prompts import CORRECTION_INSTRUCTIONS
@@ -54,31 +57,16 @@ def generation_evaluation():
 
 def retrival_evaluation():
     """Evaluate retrieval results loaded from the retrieval JSONL file."""
-    title_lookup = {}
-
-    for record in vector_store.store.values():
-        title = record["metadata"]["title"]
-        source = record["metadata"]["source"]
-        title_lookup[source] = title
+    titles = get_title_lookup()
 
     with open("eval/retrieval.jsonl", "r") as json_file:
         json_list = list(json_file)
     retrieval_results = []
     for json_str in json_list:
-        highest_score = 0.0
-        resource_id = 0.0
         record = json.loads(json_str)
 
-        test = fuzzy_matcher(title_lookup, record["question"])
-        print(test)
-
-        print(test)
-        for title in title_lookup.items():
-            match_value = fuzz.partial_ratio(title[1], record["question"])
-            if match_value > highest_score:
-                highest_score = match_value
-                resource_id = title[0]
-        retrieved_documents = retrieve_docs(record["question"])
+        title_match = match_question_to_source(record["question"])
+        retrieved_documents = retrieve_docs(record["question"]) or []
 
         retrived_source_ids = []
         for doc in retrieved_documents:
@@ -86,15 +74,15 @@ def retrival_evaluation():
             retrived_source_ids.append(value)
 
         hit = record["dok_ordning_id"] in retrived_source_ids
-        title_hit = record["dok_ordning_id"] == resource_id.split(".")[0]
+        title_hit = record["dok_ordning_id"] == title_match["source_id"]
         retrieval_results.append(
             {
                 "id": record["id"],
                 "hit": hit,
                 "expected_source": record["dok_ordning_id"],
                 "retrieved_sources": retrived_source_ids,
-                "resource_id": resource_id.split(".")[0],
-                "highest_score": highest_score,
+                "resource_id": title_match["source_id"],
+                "highest_score": title_match["highest_score"],
                 "title_hit": title_hit,
             }
         )
@@ -173,8 +161,4 @@ def create_question(question: str, gold_answer: str, agent_answer: str):
     """
 
 
-test = retrival_evaluation()
-# for item in test:
-# print(item)
-
-# if __name__ == "__main__":
+retrieve_docs("Something something")

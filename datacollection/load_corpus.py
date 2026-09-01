@@ -22,7 +22,6 @@ def load_corpus_docs(corpus_dir: Path) -> list[Document]:
         for tag in soup(["nav", "header", "footer", "script", "style"]):
             tag.decompose()
         text = re.sub(r"\s+", " ", soup.get_text()).strip()
-        # print(text)
 
         docs.append(
             Document(

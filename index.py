@@ -15,6 +15,7 @@ from prompts import (
 
 
 def search_studieordninger(query: str) -> str:
+    """Search and retrieve studieordning documents based on query."""
     retrieved_docs = retrieve_docs(query)
     batch_id = uuid.uuid4().hex[:8]
     uploads: list[tuple[str, bytes]] = []
@@ -34,17 +35,9 @@ def search_studieordninger(query: str) -> str:
 
 search_studieordninger.__doc__ = SEARCH_STUDIEORDNINGER_PROMPT
 
-max_concurrent_analysts = 1  # Ollama can only serve one request at a time.
+MAX_CONCURRENT_ANALYSTS = 1  # Ollama can only serve one request at a time.
 
-INSTRUCTIONS = (
-    RAG_WORKFLOW_INSTRUCTIONS
-    + "\n\n"
-    + "=" * 80
-    + "\n\n"
-    + SUBAGENT_DELEGATION_INSTRUCTIONS.format(
-        max_concurrent_analysts=max_concurrent_analysts,
-    )
-)
+INSTRUCTIONS = f"{RAG_WORKFLOW_INSTRUCTIONS}\n\n{'=' * 80}\n\n{SUBAGENT_DELEGATION_INSTRUCTIONS.format(max_concurrent_analysts=MAX_CONCURRENT_ANALYSTS)}"
 
 chunk_analyst_subagent = {
     "name": "chunk-analyst",
