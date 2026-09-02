@@ -1,6 +1,6 @@
 from rapidfuzz import fuzz
 
-from datacollection.vector_store import vector_store
+from .vector_store import vector_store
 
 
 def get_title_lookup():

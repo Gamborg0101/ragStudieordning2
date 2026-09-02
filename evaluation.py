@@ -33,7 +33,7 @@ def invoke_agent_with_retry(question: str, attempts: int = AGENT_INVOKE_ATTEMPTS
             time.sleep(2)
 
 
-def generation_evaluation():
+def generation_evaluation() -> list:
     """Evaluate generation results loaded from the generation JSONL file to evaulate output quality."""
     with open("eval/generation.jsonl", "r") as json_file:
         json_list = list(json_file)
@@ -54,7 +54,7 @@ def generation_evaluation():
     return generation_results
 
 
-def retrival_evaluation():
+def retrival_evaluation() -> list:
     """Evaluate retrieval results loaded from the retrieval JSONL file."""
 
     with open("eval/retrieval.jsonl", "r") as json_file:
@@ -157,9 +157,3 @@ def create_question(question: str, gold_answer: str, agent_answer: str):
     Agent answer: {agent_answer}
     ---------------------------------------
     """
-
-
-items = retrieve_docs("Bacheloruddannelsen i historie")
-
-# for item in items:
-#     print(item)
