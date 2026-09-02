@@ -6,7 +6,6 @@ from langchain.chat_models import init_chat_model
 from langchain.messages import HumanMessage
 
 from datacollection.retrieval import (
-    get_title_lookup,
     match_question_to_source,
     retrieve_docs,
 )
@@ -57,7 +56,6 @@ def generation_evaluation():
 
 def retrival_evaluation():
     """Evaluate retrieval results loaded from the retrieval JSONL file."""
-    titles = get_title_lookup()
 
     with open("eval/retrieval.jsonl", "r") as json_file:
         json_list = list(json_file)
@@ -161,4 +159,7 @@ def create_question(question: str, gold_answer: str, agent_answer: str):
     """
 
 
-retrieve_docs("Something something")
+items = retrieve_docs("Bacheloruddannelsen i historie")
+
+# for item in items:
+#     print(item)

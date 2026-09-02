@@ -22,37 +22,22 @@ def retrieve_docs(query_string: str) -> list:
 
     source_id = match_question_to_source(query_string)
 
-    retrieved_documents2 = vector_store.max_marginal_relevance_search(
-        query_string,
-        docs_returned,
-        docs_fetched,
-        diversity,
-    )
-
-    is_from_source = from_source(source_id, retrieved_documents2)
+    def from_source(docs) -> bool:
+        """Check if document has same source_id as source"""
+        return docs.metadata["source"].split(".")[0] == source_id["source_id"]
 
     retrieved_documents = vector_store.max_marginal_relevance_search(
         query_string,
         docs_returned,
         docs_fetched,
         diversity,
-        filter=(is_from_source if source_id else None),
+        filter=(from_source if source_id["source_id"] else None),
     )
 
     return retrieved_documents
 
 
-def from_source(source_id, retrieved_documents):
-    """Checks if any retrieved document is from the specified source"""
-    value_true = False
-    for doc in retrieved_documents:
-        source_values = doc.metadata["source"].split(".")[0]
-        if source_values == source_id:
-            value_true = True
-    return value_true
-
-
-def match_question_to_source(query_string: str):
+def match_question_to_source(query_string: str) -> dict[str, str]:
     """Returns source_id and score based on match"""
     source_id = 0.0
     highest_score = 0.0
