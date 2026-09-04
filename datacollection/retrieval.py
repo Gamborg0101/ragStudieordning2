@@ -26,8 +26,6 @@ def retrieve_docs(query_string: str) -> list:
         """Check if document has same source_id as source"""
         return docs.metadata["source"].split(".")[0] == source_id["source_id"]
 
-    ##in the filter - also compare year from the title with year from the retrieval.jsonl
-
     retrieved_documents = vector_store.max_marginal_relevance_search(
         query_string,
         docs_returned,
