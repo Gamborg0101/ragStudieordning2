@@ -157,3 +157,9 @@ def create_question(question: str, gold_answer: str, agent_answer: str):
     Agent answer: {agent_answer}
     ---------------------------------------
     """
+
+
+test = retrival_evaluation()
+
+for item in test:
+    print(item)

@@ -26,6 +26,8 @@ def retrieve_docs(query_string: str) -> list:
         """Check if document has same source_id as source"""
         return docs.metadata["source"].split(".")[0] == source_id["source_id"]
 
+    ##in the filter - also compare year from the title with year from the retrieval.jsonl
+
     retrieved_documents = vector_store.max_marginal_relevance_search(
         query_string,
         docs_returned,
@@ -44,7 +46,9 @@ def match_question_to_source(query_string: str) -> dict[str, str]:
     titles = get_title_lookup()
 
     for title in titles.items():
-        match_value = fuzz.partial_ratio(title[1], query_string)
+        match_value = fuzz.partial_ratio(
+            title[1], query_string, processor=lambda str: str.lower()
+        )
         if match_value > highest_score:
             highest_score = match_value
             if highest_score > 80:
