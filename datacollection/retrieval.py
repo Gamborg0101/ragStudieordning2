@@ -1,3 +1,5 @@
+import re
+
 from rapidfuzz import fuzz
 
 from .vector_store import vector_store
@@ -39,18 +41,43 @@ def retrieve_docs(query_string: str) -> list:
 
 def match_question_to_source(query_string: str) -> dict[str, str]:
     """Returns source_id and score based on match"""
-    source_id = 0.0
+    source_id = None
     highest_score = 0.0
+    best_year = None
+    score_tolerance = 80.0
+    tie_tolerance = 5.0
     titles = get_title_lookup()
 
-    for title in titles.items():
+    for source, title in titles.items():
         match_value = fuzz.partial_ratio(
-            title[1], query_string, processor=lambda str: str.lower()
+            title, query_string, processor=lambda str: str.lower()
         )
-        if match_value > highest_score:
-            highest_score = match_value
-            if highest_score > 80:
-                source_id = title[0].split(".")[0]
-            else:
-                source_id = None
+
+        year_match = re.search(r"\((\d{4})\)", title)
+        candidate_year = int(year_match.group(1)) if year_match else None
+
+        is_tie = abs(match_value - highest_score) <= tie_tolerance
+        is_new_best = match_value > highest_score
+
+        if is_tie:
+            candidate_wins_tie = candidate_year is not None and (
+                best_year is None or candidate_year > best_year
+            )
+            if not candidate_wins_tie:
+                continue
+        elif not is_new_best:
+            continue
+
+        highest_score = max(match_value, highest_score)
+        best_year = candidate_year
+        source_id = source.split(".")[0] if highest_score > score_tolerance else None
+
     return {"source_id": source_id, "highest_score": highest_score}
+
+
+test = match_question_to_source(
+    "Hvor mange ECTS er kandidattilvalget i latin normeret til, og hvornår trådte studieordningen i kraft?"
+)
+
+# for item in test:
+# print(item)
