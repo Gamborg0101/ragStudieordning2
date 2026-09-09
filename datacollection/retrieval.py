@@ -78,6 +78,3 @@ def match_question_to_source(query_string: str) -> dict[str, str]:
 test = match_question_to_source(
     "Hvor mange ECTS er kandidattilvalget i latin normeret til, og hvornår trådte studieordningen i kraft?"
 )
-
-# for item in test:
-# print(item)
