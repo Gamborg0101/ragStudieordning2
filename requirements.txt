@@ -56,3 +56,4 @@ wcmatch==11.0.1
 websockets==16.1.1
 xxhash==4.0.1
 zstandard==0.25.0
+rapidfuzz==3.14.6
