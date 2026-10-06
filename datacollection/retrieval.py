@@ -78,3 +78,11 @@ def match_question_to_source(query_string: str) -> dict[str, str]:
 test = match_question_to_source(
     "Hvor mange ECTS er kandidattilvalget i latin normeret til, og hvornår trådte studieordningen i kraft?"
 )
+
+
+## Next up - abstention - if the model does not know the answer, tell the user
+## Three implementations: 
+## 1) Include it in the prompt RAG_WORKFLOW_INSTRUCTIONS - some like "After more than 2 searches, and the chunk does not contain the answer then create a reply that says something like it does not know the answer to the question"
+## 2) Gate on retrival score - when retrieve_docs returns tnothin, have search_studieordninger return something like "No relevant studieordninger found". Then the model never sees irrelevant chunk that it can make an answer from.
+## 3) Measure it in eval - I could 5-10 unanswerable questions in generation.jsonl, and goldanswer to "not in corpus" - then print the top-1 score for answerable and unanswerable questions, and put the threshold in the gap between them.
+##      If not gap, then rely on layer 1 and accept some error (? maybe...)

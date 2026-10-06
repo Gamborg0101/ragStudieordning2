@@ -15,7 +15,6 @@ from prompts import CORRECTION_INSTRUCTIONS
 
 AGENT_INVOKE_ATTEMPTS = 3
 
-
 def invoke_agent_with_retry(question: str, attempts: int = AGENT_INVOKE_ATTEMPTS):
     """Retry agent.invoke on transient Ollama stream failures (see langchain-ai/langchain#34918)."""
     for attempt in range(1, attempts + 1):
@@ -56,7 +55,6 @@ def generation_evaluation() -> list:
 
 def retrival_evaluation() -> list:
     """Evaluate retrieval results loaded from the retrieval JSONL file."""
-
     with open("eval/retrieval.jsonl", "r") as json_file:
         json_list = list(json_file)
     retrieval_results = []
