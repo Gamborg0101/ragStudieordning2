@@ -2,7 +2,7 @@ import re
 
 from rapidfuzz import fuzz
 
-from .vector_store import vector_store
+from datacollection.vector_store import vector_store
 
 
 def get_title_lookup():
@@ -69,6 +69,7 @@ def match_question_to_source(query_string: str) -> dict[str, str]:
             continue
 
         highest_score = max(match_value, highest_score)
+        
         best_year = candidate_year
         source_id = source.split(".")[0] if highest_score > score_tolerance else None
 
